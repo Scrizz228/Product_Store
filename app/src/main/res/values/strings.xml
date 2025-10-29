@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">7Even</string>
+    <string name="product_catalog">Каталог продуктов</string>
+    <string name="cart">Корзина</string>
+    <string name="search">Поиск</string>
+    <string name="add_to_cart">В корзину</string>
+    <string name="product_details">Детали продукта</string>
+    <string name="back">Назад</string>
+    <string name="empty_cart">Корзина пуста</string>
+    <string name="add_products_from_catalog">Добавьте товары из каталога</string>
+    <string name="checkout">Оформить заказ</string>
+    <string name="clear_cart">Очистить корзину</string>
+    <string name="quantity">Количество</string>
+    <string name="total">Итого</string>
+    <string name="items">Товаров</string>
+    <string name="all_categories">Все</string>
+    <string name="search_products">Поиск продуктов...</string>
+</resources>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    
+    <!-- Chicken body -->
+    <path
+        android:fillColor="#FFEB3B"
+        android:pathData="M12,8C8,8 6,10 6,14C6,18 8,20 12,20C16,20 18,18 18,14C18,10 16,8 12,8Z" />
+    
+    <!-- Chicken head -->
+    <path
+        android:fillColor="#FFEB3B"
+        android:pathData="M12,6C10,6 9,7 9,8C9,9 10,10 12,10C14,10 15,9 15,8C15,7 14,6 12,6Z" />
+    
+    <!-- Beak -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M12,8L14,7L12,6L10,7L12,8Z" />
+    
+    <!-- Eye -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M11,7L12,7L12,8L11,8L11,7Z" />
+    
+    <!-- Wing -->
+    <path
+        android:fillColor="#F57F17"
+        android:pathData="M9,12L11,12L11,16L9,16L9,12Z" />
+</vector>

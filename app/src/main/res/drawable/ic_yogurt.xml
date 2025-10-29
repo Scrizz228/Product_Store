@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    
+    <!-- Yogurt cup -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M8,6L16,6L16,18L8,18L8,6Z" />
+    
+    <!-- Yogurt cup rim -->
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M8,6L16,6L16,8L8,8L8,6Z" />
+    
+    <!-- Yogurt content -->
+    <path
+        android:fillColor="#FFF3E0"
+        android:pathData="M9,8L15,8L15,17L9,17L9,8Z" />
+    
+    <!-- Yogurt swirls -->
+    <path
+        android:fillColor="#FFCC02"
+        android:pathData="M10,10C10,10 11,11 12,10C13,9 14,10 14,10" />
+    <path
+        android:fillColor="#FFCC02"
+        android:pathData="M10,12C10,12 11,13 12,12C13,11 14,12 14,12" />
+    <path
+        android:fillColor="#FFCC02"
+        android:pathData="M10,14C10,14 11,15 12,14C13,13 14,14 14,14" />
+</vector>

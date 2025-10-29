@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    
+    <!-- Juice bottle -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M8,4L16,4L16,6L8,6L8,4Z" />
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M7,6L17,6L17,20C17,21.1 16.1,22 15,22L9,22C7.9,22 7,21.1 7,20L7,6Z" />
+    
+    <!-- Juice label -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M8,8L16,8L16,14L8,14L8,8Z" />
+    
+    <!-- Orange slices -->
+    <path
+        android:fillColor="#FFB74D"
+        android:pathData="M10,10L12,10L12,12L10,12L10,10Z" />
+    <path
+        android:fillColor="#FFB74D"
+        android:pathData="M12,10L14,10L14,12L12,12L12,10Z" />
+    <path
+        android:fillColor="#FFB74D"
+        android:pathData="M10,12L12,12L12,14L10,14L10,12Z" />
+    <path
+        android:fillColor="#FFB74D"
+        android:pathData="M12,12L14,12L14,14L12,14L12,12Z" />
+</vector>
