@@ -52,7 +52,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.coil.compose)
-    implementation("com.google.accompanist:accompanist-placeholder-material3:0.34.0")
+    // implementation("com.google.accompanist:accompanist-placeholder-material3:0.34.0") // отключено для диагностики
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

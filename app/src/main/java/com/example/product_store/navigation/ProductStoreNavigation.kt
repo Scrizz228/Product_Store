@@ -33,7 +33,8 @@ fun ProductStoreNavigation(
                 },
                 onFavoritesClick = { navController.navigate("favorites") },
                 onSettingsClick = { navController.navigate("settings") },
-                onDealsClick = { navController.navigate("deals") }
+                onDealsClick = { navController.navigate("deals") },
+                onNavigateHome = { /* уже дома, ничего не делаем */ }
             )
         }
         
@@ -50,7 +51,8 @@ fun ProductStoreNavigation(
                     },
                     onCartClick = {
                         navController.navigate("cart")
-                    }
+                    },
+                    onNavigateHome = { navController.popBackStack("catalog", inclusive = false) }
                 )
             }
         }
@@ -63,7 +65,8 @@ fun ProductStoreNavigation(
                 },
                 onProductClick = { product ->
                     navController.navigate("product_detail/${product.id}")
-                }
+                },
+                onNavigateHome = { navController.popBackStack("catalog", inclusive = false) }
             )
         }
 
@@ -73,14 +76,16 @@ fun ProductStoreNavigation(
                 onBackClick = { navController.popBackStack() },
                 onProductClick = { product ->
                     navController.navigate("product_detail/${product.id}")
-                }
+                },
+                onNavigateHome = { navController.popBackStack("catalog", inclusive = false) }
             )
         }
 
         composable("settings") {
             SettingsScreen(
                 viewModel = viewModel,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                onNavigateHome = { navController.popBackStack("catalog", inclusive = false) }
             )
         }
 
@@ -90,7 +95,8 @@ fun ProductStoreNavigation(
                 onBackClick = { navController.popBackStack() },
                 onProductClick = { product ->
                     navController.navigate("product_detail/${product.id}")
-                }
+                },
+                onNavigateHome = { navController.popBackStack("catalog", inclusive = false) }
             )
         }
     }

@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.product_store.R
 import com.example.product_store.data.CartItem
 import com.example.product_store.viewmodel.ProductStoreViewModel
@@ -33,7 +34,8 @@ import com.example.product_store.viewmodel.ProductStoreViewModel
 fun CartScreen(
     viewModel: ProductStoreViewModel,
     onBackClick: () -> Unit,
-    onProductClick: (com.example.product_store.data.Product) -> Unit
+    onProductClick: (com.example.product_store.data.Product) -> Unit,
+    onNavigateHome: () -> Unit // новый аргумент
 ) {
     val cart by viewModel.cart.collectAsStateWithLifecycle()
     
@@ -44,7 +46,15 @@ fun CartScreen(
     ) {
         // Top App Bar
         TopAppBar(
-            title = { Text("Корзина") },
+            title = {
+                Text(
+                    text = "7Even",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable(onClick = onNavigateHome)
+                )
+            },
             navigationIcon = {
                 IconButton(onClick = onBackClick) {
                     Icon(
@@ -213,13 +223,20 @@ fun CartItemCard(
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable { onProductClick(cartItem.product) }
             ) {
+                val context = androidx.compose.ui.platform.LocalContext.current
+                val req = remember(cartItem.product.imageRes) {
+                    ImageRequest.Builder(context)
+                        .data(cartItem.product.imageRes)
+                        .allowHardware(false)
+                        .size(200)
+                        .crossfade(true)
+                        .build()
+                }
                 AsyncImage(
-                    model = cartItem.product.imageUrl,
+                    model = req,
                     contentDescription = cartItem.product.name,
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                    error = painterResource(id = R.drawable.ic_launcher_7even),
-                    placeholder = painterResource(id = R.drawable.ic_launcher_7even)
+                    contentScale = ContentScale.Crop
                 )
             }
             

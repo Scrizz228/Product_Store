@@ -16,13 +16,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.product_store.data.Product
 import com.example.product_store.viewmodel.ProductStoreViewModel
+import androidx.compose.foundation.clickable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DealsScreen(
     viewModel: ProductStoreViewModel,
     onBackClick: () -> Unit,
-    onProductClick: (Product) -> Unit
+    onProductClick: (Product) -> Unit,
+    onNavigateHome: () -> Unit
 ) {
     val products by viewModel.products.collectAsState()
     val favorites by viewModel.favoriteIds.collectAsState()
@@ -31,25 +33,14 @@ fun DealsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { 
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Акции", fontWeight = FontWeight.Bold)
-                        if (dealsProducts.isNotEmpty()) {
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Surface(
-                                shape = MaterialTheme.shapes.small,
-                                color = MaterialTheme.colorScheme.error
-                            ) {
-                                Text(
-                                    text = "${dealsProducts.size}",
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                    color = MaterialTheme.colorScheme.onError,
-                                    style = MaterialTheme.typography.labelMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-                    }
+                title = {
+                    Text(
+                        text = "7Even",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable(onClick = onNavigateHome)
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
@@ -113,4 +104,6 @@ fun DealsScreen(
         }
     }
 }
+
+
 

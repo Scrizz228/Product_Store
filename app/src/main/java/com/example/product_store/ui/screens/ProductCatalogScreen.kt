@@ -16,14 +16,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.material3.Icon
+import androidx.compose.material3.BadgedBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,7 +56,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import androidx.compose.ui.platform.LocalContext
-import com.google.accompanist.placeholder.material3.placeholder
 import com.example.product_store.R
 import com.example.product_store.data.Product
 import com.example.product_store.data.ProductCategory
@@ -76,7 +82,8 @@ fun ProductCatalogScreen(
     onCartClick: () -> Unit,
     onFavoritesClick: () -> Unit,
     onSettingsClick: () -> Unit,
-    onDealsClick: () -> Unit
+    onDealsClick: () -> Unit,
+    onNavigateHome: () -> Unit // добавил параметр для возврата домой
 ) {
     val products by viewModel.filteredProducts.collectAsStateWithLifecycle()
     val recentSearches by viewModel.recentSearches.collectAsStateWithLifecycle()
@@ -105,7 +112,8 @@ fun ProductCatalogScreen(
                     text = "7Even",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable(onClick = onNavigateHome)
                 )
             },
             actions = {
@@ -120,59 +128,33 @@ fun ProductCatalogScreen(
                 }) {
                     Icon(
                         imageVector = Icons.Default.Search,
-                        contentDescription = "Поиск"
+                        contentDescription = "Поиск",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
-                // Sort menu
-                var sortMenuOpen by remember { mutableStateOf(false) }
-                IconButton(onClick = { sortMenuOpen = true }) {
-                    Icon(painterResource(id = R.drawable.ic_sort), contentDescription = "Сортировка")
-                }
-                DropdownMenu(expanded = sortMenuOpen, onDismissRequest = { sortMenuOpen = false }) {
-                    DropdownMenuItem(
-                        text = { Text("По имени") },
-                        onClick = {
-                            viewModel.setSort(SortOption.NAME)
-                            sortMenuOpen = false
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("По цене") },
-                        onClick = {
-                            viewModel.setSort(SortOption.PRICE)
-                            sortMenuOpen = false
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = { Text("По скидке") },
-                        onClick = {
-                            viewModel.setSort(SortOption.DISCOUNT)
-                            sortMenuOpen = false
-                        }
+                // Sort moved into overflow menu for cleaner toolbar
+                // Overflow menu: Deals, Favorites, Settings
+                var overflowOpen by remember { mutableStateOf(false) }
+                IconButton(onClick = { overflowOpen = true }) {
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "Ещё",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
-                // Deals screen button
                 val dealsCount = viewModel.products.value.count { it.hasDiscount }
-                IconButton(onClick = onDealsClick) {
-                    Box {
-                        Icon(painterResource(id = R.drawable.ic_local_offer), contentDescription = "Акции")
-                        if (dealsCount > 0) {
-                            Badge(
-                                modifier = Modifier.offset(x = 8.dp, y = (-8).dp)
-                            ) {
-                                Text(dealsCount.toString())
-                            }
-                        }
-                    }
-                }
-                // Favorites screen button
-                IconButton(onClick = onFavoritesClick) {
-                    Icon(painterResource(id = R.drawable.ic_favorite_filled), contentDescription = "Избранное")
-                }
-                // Settings screen button
-                IconButton(onClick = onSettingsClick) {
-                    Icon(painterResource(id = R.drawable.ic_settings), contentDescription = "Настройки")
-                }
+                StyledOverflowMenu(
+                    expanded = overflowOpen,
+                    onDismiss = { overflowOpen = false },
+                    sortOption = sortOption,
+                    onSortSelect = { opt -> overflowOpen = false; viewModel.setSort(opt) },
+                    dealsCount = dealsCount,
+                    onDealsClick = { overflowOpen = false; onDealsClick() },
+                    onFavoritesClick = { overflowOpen = false; onFavoritesClick() },
+                    onSettingsClick = { overflowOpen = false; onSettingsClick() }
+                )
                 val badgeScale = remember { Animatable(1f) }
                 LaunchedEffect(cart.totalItems) {
                     if (cart.totalItems > 0) {
@@ -181,22 +163,15 @@ fun ProductCatalogScreen(
                         badgeScale.animateTo(1f, tween(durationMillis = 120))
                     }
                 }
-                Box {
-                    IconButton(onClick = onCartClick) {
-                        Icon(
-                            imageVector = Icons.Default.ShoppingCart,
-                            contentDescription = "Корзина"
-                        )
-                    }
-                    if (cart.totalItems > 0) {
-                        Badge(
-                            modifier = Modifier
-                                .offset(x = (-8).dp, y = 8.dp)
-                                .scale(badgeScale.value)
-                        ) {
-                            Text(cart.totalItems.toString())
-                        }
-                    }
+                ToolbarIconButton(onClick = onCartClick, badgeCount = cart.totalItems, contentDescription = "Корзина") {
+                    Icon(
+                        imageVector = Icons.Default.ShoppingCart,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .size(20.dp)
+                            .scale(badgeScale.value)
+                    )
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
@@ -445,6 +420,7 @@ fun ProductCard(
     isFavorite: Boolean,
     onToggleFavorite: () -> Unit
 ) {
+    val haptics = LocalHapticFeedback.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -455,41 +431,53 @@ fun ProductCard(
         Column(
             modifier = Modifier.padding(12.dp)
         ) {
-            // Product Image
-            var imageLoading by remember { mutableStateOf(true) }
+            // Product Image (теперь painterResource)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)
                     .clip(RoundedCornerShape(8.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .placeholder(visible = imageLoading)
             ) {
                 val context = LocalContext.current
-                val imageRequest = remember(product.imageUrl) {
-                    ImageRequest.Builder(context)
-                        .data(product.imageUrl)
+                val req = remember(product.imageRes) {
+                    coil.request.ImageRequest.Builder(context)
+                        .data(product.imageRes)
+                        .allowHardware(false)
+                        .size(400)
                         .crossfade(true)
                         .build()
                 }
-                AsyncImage(
-                    model = imageRequest,
+                coil.compose.AsyncImage(
+                    model = req,
                     contentDescription = product.name,
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                    error = painterResource(id = R.drawable.ic_launcher_7even),
-                    placeholder = painterResource(id = R.drawable.ic_launcher_7even),
-                    onError = { imageLoading = false },
-                    onSuccess = { imageLoading = false }
+                    contentScale = ContentScale.Crop
                 )
                 
                 // Favorite toggle
+                val favScale = remember { Animatable(1f) }
+                val favScope = rememberCoroutineScope()
                 IconButton(
-                    onClick = onToggleFavorite,
+                    onClick = {
+                        onToggleFavorite()
+                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        // micro pop
+                        favScope.launch {
+                            favScale.snapTo(1f)
+                            favScale.animateTo(1.15f, tween(90))
+                            favScale.animateTo(1f, tween(90))
+                        }
+                    },
                     modifier = Modifier.align(Alignment.TopStart)
                 ) {
                     val iconId = if (isFavorite) R.drawable.ic_favorite_filled else R.drawable.ic_favorite_border
-                    Icon(painterResource(id = iconId), contentDescription = "Избранное", tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface)
+                    Icon(
+                        painter = painterResource(id = iconId),
+                        contentDescription = "Избранное",
+                        tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.scale(favScale.value)
+                    )
                 }
 
                 // Discount Badge
@@ -555,6 +543,7 @@ fun ProductCard(
             Button(
                 onClick = {
                     onAddToCart()
+                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                     scope.launch {
                         addScale.snapTo(1f)
                         addScale.animateTo(0.96f, tween(80))
@@ -571,5 +560,185 @@ fun ProductCard(
                 Text("В корзину")
             }
         }
+    }
+}
+
+@Composable
+private fun ToolbarIconButton(
+    onClick: () -> Unit,
+    badgeCount: Int? = null,
+    contentDescription: String?,
+    content: @Composable () -> Unit
+) {
+    IconButton(onClick = onClick, colors = IconButtonDefaults.iconButtonColors()) {
+        if ((badgeCount ?: 0) > 0) {
+            BadgedBox(badge = {
+                Badge(containerColor = MaterialTheme.colorScheme.error) {
+                    Text((badgeCount ?: 0).toString())
+                }
+            }) {
+                content()
+            }
+        } else {
+            content()
+        }
+    }
+}
+
+@Composable
+private fun ToolbarActionsCluster(
+    dealsBadge: Int,
+    onDealsClick: () -> Unit,
+    onFavoritesClick: () -> Unit,
+    onSettingsClick: () -> Unit
+) {
+    Surface(
+        shape = RoundedCornerShape(20.dp),
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 1.dp,
+        shadowElevation = 0.dp
+    ) {
+        Row(
+            modifier = Modifier.height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.spacedBy(0.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ToolbarIconButton(onClick = onDealsClick, badgeCount = dealsBadge, contentDescription = "Акции") {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_local_offer),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+            VerticalDivider(modifier = Modifier.height(24.dp))
+            ToolbarIconButton(onClick = onFavoritesClick, contentDescription = "Избранное") {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_favorite_filled),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+            VerticalDivider(modifier = Modifier.height(24.dp))
+            ToolbarIconButton(onClick = onSettingsClick, contentDescription = "Настройки") {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_settings),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun MenuSectionHeader(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+    )
+}
+
+@Composable
+private fun StyledOverflowMenu(
+    expanded: Boolean,
+    onDismiss: () -> Unit,
+    sortOption: SortOption,
+    onSortSelect: (SortOption) -> Unit,
+    dealsCount: Int,
+    onDealsClick: () -> Unit,
+    onFavoritesClick: () -> Unit,
+    onSettingsClick: () -> Unit
+) {
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = onDismiss,
+        modifier = Modifier
+            .shadow(8.dp, RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surface)
+    ) {
+        MenuSectionHeader("Сортировка")
+        DropdownMenuItem(
+            text = { Text("По имени", style = MaterialTheme.typography.bodyMedium) },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_sort),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            trailingIcon = { if (sortOption == SortOption.NAME) Icon(Icons.Default.Check, contentDescription = null) },
+            onClick = { onSortSelect(SortOption.NAME) },
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp)
+        )
+        DropdownMenuItem(
+            text = { Text("По цене", style = MaterialTheme.typography.bodyMedium) },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_sort),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            trailingIcon = { if (sortOption == SortOption.PRICE) Icon(Icons.Default.Check, contentDescription = null) },
+            onClick = { onSortSelect(SortOption.PRICE) },
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp)
+        )
+        DropdownMenuItem(
+            text = { Text("По скидке", style = MaterialTheme.typography.bodyMedium) },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_sort),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            trailingIcon = { if (sortOption == SortOption.DISCOUNT) Icon(Icons.Default.Check, contentDescription = null) },
+            onClick = { onSortSelect(SortOption.DISCOUNT) },
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp)
+        )
+        HorizontalDivider()
+        MenuSectionHeader("Навигация")
+        DropdownMenuItem(
+            text = { Text(if (dealsCount > 0) "Акции ($dealsCount)" else "Акции", style = MaterialTheme.typography.bodyMedium) },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_local_offer),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            onClick = onDealsClick,
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp)
+        )
+        DropdownMenuItem(
+            text = { Text("Избранное", style = MaterialTheme.typography.bodyMedium) },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_favorite_filled),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            onClick = onFavoritesClick,
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp)
+        )
+        DropdownMenuItem(
+            text = { Text("Настройки", style = MaterialTheme.typography.bodyMedium) },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_settings),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            onClick = onSettingsClick,
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp)
+        )
     }
 }

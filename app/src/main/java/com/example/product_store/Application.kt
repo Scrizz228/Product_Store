@@ -44,6 +44,7 @@ class Application : Application(), ImageLoaderFactory {
             .build()
         
         return ImageLoader.Builder(this)
+            .allowHardware(false)
             .okHttpClient(okHttpClient)
             .memoryCache {
                 MemoryCache.Builder(this)

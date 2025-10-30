@@ -29,13 +29,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import androidx.compose.ui.platform.LocalContext
-import com.google.accompanist.placeholder.material3.placeholder
 import com.example.product_store.R
 import com.example.product_store.data.Product
 import com.example.product_store.viewmodel.ProductStoreViewModel
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.clickable
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,7 +44,8 @@ fun ProductDetailScreen(
     product: Product,
     viewModel: ProductStoreViewModel,
     onBackClick: () -> Unit,
-    onCartClick: () -> Unit
+    onCartClick: () -> Unit,
+    onNavigateHome: () -> Unit
 ) {
     val cart by viewModel.cart.collectAsStateWithLifecycle()
     val cartItem = cart.items.find { it.product.id == product.id }
@@ -57,7 +58,15 @@ fun ProductDetailScreen(
     ) {
         // Top App Bar
         TopAppBar(
-            title = { Text("Детали продукта") },
+            title = {
+                Text(
+                    text = "7Even",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable(onClick = onNavigateHome)
+                )
+            },
             navigationIcon = {
                 IconButton(onClick = onBackClick) {
                     Icon(
@@ -119,31 +128,27 @@ fun ProductDetailScreen(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            // Product Image
-            var imageLoading by remember { mutableStateOf(true) }
+            // Product Image (теперь painterResource)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(300.dp)
                     .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .placeholder(visible = imageLoading)
             ) {
                 val context = LocalContext.current
-                val imageRequest = remember(product.imageUrl) {
-                    ImageRequest.Builder(context)
-                        .data(product.imageUrl)
+                val req = remember(product.imageRes) {
+                    coil.request.ImageRequest.Builder(context)
+                        .data(product.imageRes)
+                        .allowHardware(false)
+                        .size(800)
                         .crossfade(true)
                         .build()
                 }
-                AsyncImage(
-                    model = imageRequest,
+                coil.compose.AsyncImage(
+                    model = req,
                     contentDescription = product.name,
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                    error = painterResource(id = R.drawable.ic_launcher_7even),
-                    placeholder = painterResource(id = R.drawable.ic_launcher_7even),
-                    onError = { imageLoading = false },
-                    onSuccess = { imageLoading = false }
+                    contentScale = ContentScale.Crop
                 )
                 
                 // Discount Badge
