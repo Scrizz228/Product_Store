@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    
+    <!-- Carrot body -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M8,8L16,20L14,22L6,10L8,8Z" />
+    
+    <!-- Carrot leaves -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M8,8L6,6L4,8L6,10L8,8Z" />
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M8,8L10,6L12,8L10,10L8,8Z" />
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M8,8L6,10L8,12L10,10L8,8Z" />
+    
+    <!-- Carrot lines -->
+    <path
+        android:fillColor="#E65100"
+        android:pathData="M9,10L15,18" />
+    <path
+        android:fillColor="#E65100"
+        android:pathData="M9,12L15,20" />
+</vector>

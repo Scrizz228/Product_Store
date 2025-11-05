@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Background circle -->
+    <path
+        android:fillColor="#2E7D32"
+        android:pathData="M54,54m-50,0a50,50 0,1 1,100 0a50,50 0,1 1,-100 0" />
+    
+    <!-- Shopping cart icon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,25 L78,25 C80.21,25 82,26.79 82,29 L82,75 C82,77.21 80.21,79 78,79 L30,79 C27.79,79 26,77.21 26,75 L26,29 C26,26.79 27.79,25 30,25 Z M30,27 C28.9,27 28,27.9 28,29 L28,75 C28,76.1 28.9,77 30,77 L78,77 C79.1,77 80,76.1 80,75 L80,29 C80,27.9 79.1,27 78,27 L30,27 Z" />
+    
+    <!-- Cart handle -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M32,21 L32,19 C32,17.9 32.9,17 34,17 L74,17 C75.1,17 76,17.9 76,19 L76,21 L32,21 Z" />
+    
+    <!-- Number "7" -->
+    <path
+        android:fillColor="#2E7D32"
+        android:pathData="M40,35 L40,33 L60,33 L60,35 L50,35 L50,55 L48,55 L48,35 L40,35 Z" />
+    
+    <!-- "Even" text (simplified as lines) -->
+    <path
+        android:fillColor="#2E7D32"
+        android:pathData="M35,60 L35,58 L45,58 L45,60 L35,60 Z" />
+    <path
+        android:fillColor="#2E7D32"
+        android:pathData="M47,60 L47,58 L57,58 L57,60 L47,60 Z" />
+    <path
+        android:fillColor="#2E7D32"
+        android:pathData="M59,60 L59,58 L69,58 L69,60 L59,60 Z" />
+    <path
+        android:fillColor="#2E7D32"
+        android:pathData="M71,60 L71,58 L75,58 L75,60 L71,60 Z" />
+    
+    <!-- Decorative elements -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M25,25m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M83,25m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M25,83m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M83,83m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+</vector>
